@@ -1,16 +1,19 @@
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 public class KafkaExample {
     private final String topic;
@@ -61,7 +64,7 @@ public class KafkaExample {
                     Producer<String, String> producer = new KafkaProducer<>(props);
                     int i = 0;
                    // while(true) 
-                    for(int j =0;j<10;j++)
+                    for(int j =10;j<20;j++)
                     {
                         Date d = new Date();
                         try {
@@ -83,11 +86,23 @@ public class KafkaExample {
     }
 
     public static void main(String[] args) {
-		String brokers = "localhost:9092";
-		String username = "srilekha";
-		String password = "srilekha";
-		KafkaExample c = new KafkaExample(brokers, username, password);
+	    
+	String brokers = "localhost:9092";
+	String username = "srilekha";
+	String password = "srilekha";
+	
+	KafkaExample c = new KafkaExample(brokers, username, password);
+	c.createTopic(username + "-2");
         c.produce();
         c.consume();
+    }
+    public void createTopic(String topic) {
+    	
+    	AdminClient adminClient = AdminClient.create(props);
+        short rep = 1;
+        NewTopic newTopic = new NewTopic(topic,1,rep);
+
+        adminClient.createTopics(Collections.singletonList(newTopic));
+   	System.out.println("Topic created............");
     }
 }
